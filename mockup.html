@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="A brief description of your page content."
+    />
+    <title>ActityEditor</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header>
+      <h1>ActivityEditor</h1>
+    </header>
+
+    <main>
+      <h2>List of Activities</h2>
+
+      <p>Add a new activity!</p>
+      <form>
+        <label for="activityName">Activity Name:</label>
+        <input type="text" id="activityName" name="activityName" required />
+
+        <label for="activityDesc">Activity Description:</label>
+        <input type="text" id="activityDesc" name="activityDesc" required />
+
+        <button type="submit">Add Activity</button>
+      </form>
+      <p></p>
+      <table>
+        <tr>
+          <th>Activity Name</th>
+          <th>Activity Description</th>
+          <th>Assigned Reporter</th>
+          <th colspan="2">Actions</th>
+        </tr>
+        <tr>
+          <td>US News</td>
+          <td>Find biggest news in US</td>
+          <td></td>
+          <td colspan="2"><button class="removeButton">Remove</button></td>
+        </tr>
+        <tr>
+          <td>Spain News</td>
+          <td>Find biggest news in Spain</td>
+          <td>Sam Smith</td>
+          <td colspan="2"><button class="promoteButton">Promote</button></td>
+        </tr>
+        <tr>
+          <td>Brazil News</td>
+          <td>Find biggest news in Brazil</td>
+          <td></td>
+          <td><button class="removeButton">Remove</button></td>
+          <td colspan="2"><button class="promoteButton">Promote</button></td>
+        </tr>
+      </table>
+
+      <h2>List of Reporters</h2>
+      <p>Add a new reporter!</p>
+      <form>
+        <label for="reporterName">Reporter Name:</label>
+        <input type="text" id="reporterName" name="reporterName" required />
+        
+        <button type="submit">Add Reporter</button>
+      </form>
+      <p></p>
+      <table>
+        <tr>
+          <th>Reporter Name</th>
+          <th>Assigned Activity Name</th>
+          <th colspan="2">Actions</th>
+        </tr>
+        <tr>
+          <td>Sam Smith</td>
+          <td>Spain News</td>
+        </tr>
+        <tr>
+          <td>Samantha Smith</td>
+          <td></td>
+          <td><button class="removeButton">Remove</button></td>
+          <td><button class="assignButton">Assign</button></td>
+        </tr>
+      </table>
+    </main>
+  </body>
+</html>
