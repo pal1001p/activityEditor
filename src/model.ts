@@ -1,4 +1,5 @@
 import { initialize } from "next/dist/server/lib/render-server"
+import { act } from "react"
 
 export class Activity {
     actName: string
@@ -65,8 +66,11 @@ export class Model {
 
 
     removeReporter(reporter: Reporter): Array<Reporter>{
+        if (!reporter.canBeRemoved){
+            throw new Error ("This reporter cannot be removed!")
+        }
+        this.reporters = this.reporters.filter(r=>r.name !== reporter.name)
         return this.reporters
-
     }
 
 
@@ -85,27 +89,50 @@ export class Model {
     }
 
     promoteActivity(activity: Activity): Array<Activity>{
+        if (!activity.canBePromoted){
+            throw new Error("This activity cannot be promoted!")
+        }
+        const toPromote = this.activities.find(a => a.actName == activity.actName)
+        const otherActivities = this.activities.filter(a => a.actName !== activity.actName)
+
+        if (toPromote){
+            otherActivities.unshift(toPromote)
+        }
+
+        this.activities = otherActivities
+    
         return this.activities
     }
 
     removeActivity(activity: Activity): Array<Activity>{
+        if (!activity.canBeRemoved){
+            throw new Error ("This activity cannot be removed!")
+        }
+        this.activities = this.activities.filter(a=>a.actName !== activity.actName)
         return this.activities
     }
 
     assignReporter(activity: Activity, reporter: Reporter): void{
+        // shouldn't get past these anyway
+        if (!activity.canBeAssigned){
+            throw new Error ("This activity cannot be assigned to!")
+        }
+        if (!reporter.canBeAssigned){
+            throw new Error ("This reporter cannot be assigned!")
+        }
 
+        activity.assignedReporter = reporter
+        reporter.assignedActivity = activity
+
+        activity.canBeAssigned = false
+        reporter.canBeAssigned = false
+        activity.canBeRemoved = false
+        reporter.canBeRemoved = false
     }
 
-    // getAvailableReporters(){
-    // }
-
-    // getAvailableActivities(){
-
-    // }
-
-
-
-
-
+    getAvailableActivities(){
+        const available = this.activities.filter(a=>a.canBeAssigned)
+        return available
+    }
 }
 

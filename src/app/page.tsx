@@ -4,7 +4,7 @@ import styles from "./page.module.css";
 import { Reporter } from "../model";
 import { Activity } from "../model";
 import { Model } from "../model";
-import React from "react";
+import React, { useEffect } from "react";
 
 export function addReporter(m: Model, reporter: Reporter) {
   m.addReporter(reporter);
@@ -14,16 +14,41 @@ export function addActivity(m: Model, activity: Activity) {
   m.addActivity(activity);
 }
 
+export function promoteActivity(m: Model, activity: Activity) {
+  m.promoteActivity(activity);
+}
+
+export function assignReporter(
+  m: Model,
+  activity: Activity,
+  reporter: Reporter,
+) {
+  m.assignReporter(activity, reporter);
+}
+
+export function removeActivity(m: Model, activity: Activity) {
+  m.removeActivity(activity);
+}
+
+export function removeReporter(m: Model, reporter: Reporter) {
+  m.removeReporter(reporter);
+}
+
 export default function Home() {
   const [model, setModel] = React.useState(new Model());
   const [rerender, forceRerender] = React.useState(0);
   const [actName, setActName] = React.useState("");
   const [desc, setDesc] = React.useState("");
   const [repName, setRepName] = React.useState("");
+  const [availableActivities, setAvailableActivities] = React.useState<
+    Array<Activity>
+  >([]);
+  const [reporterBeingAssigned, setReporterBeingAssigned] =
+    React.useState<Reporter | null>(null);
 
   // triggers re-render
   function andRefreshDisplay() {
-    forceRerender(rerender => rerender + 1);
+    forceRerender(rerender + 1);
   }
 
   // use cases
@@ -36,7 +61,14 @@ export default function Home() {
     }
   }
 
-  function handleRemoveReporter(reporter: Reporter) {}
+  function handleRemoveReporter(reporter: Reporter) {
+    try {
+      removeReporter(model, reporter);
+      andRefreshDisplay();
+    } catch (error) {
+      alert(error);
+    }
+  }
 
   function handleAddActivity(activity: Activity) {
     try {
@@ -47,19 +79,41 @@ export default function Home() {
     }
   }
 
-  function handlePromoteActivity(activity: Activity) {}
+  function handlePromoteActivity(activity: Activity) {
+    try {
+      promoteActivity(model, activity);
+      andRefreshDisplay();
+    } catch (error) {
+      alert(error);
+    }
+  }
 
-  function handleRemoveActivity(activity: Activity) {}
+  function handleRemoveActivity(activity: Activity) {
+    try {
+      removeActivity(model, activity);
+      andRefreshDisplay();
+    } catch (error) {
+      alert(error);
+    }
+  }
 
-  function handleAssignReporter(activity: Activity, reporter: Reporter): void {}
+  function handleAssignReporter(activity: Activity, reporter: Reporter): void {
+    try {
+      assignReporter(model, activity, reporter);
+      setReporterBeingAssigned(null);
+
+      andRefreshDisplay();
+    } catch (error) {
+      alert(error);
+    }
+  }
 
   // low-level
-  function handleSelectReporter(reporter: Reporter) {}
 
-  function handleSelectActivity(activity: Activity) {}
-
-  function handleAssignReporterToSomething() {
-    // how to display activties that they can be assigned to?
+  function handleSelectReporterToAssign(reporter: Reporter) {
+    const available = model.getAvailableActivities();
+    setAvailableActivities(available);
+    setReporterBeingAssigned(reporter);
   }
 
   return (
@@ -86,10 +140,23 @@ export default function Home() {
           />
 
           <button
-          type="button"
-            onClick={() => handleAddActivity(new Activity(actName, desc))} className="addActivityButton"> Add Activity</button>
+            type="button"
+            onClick={() => handleAddActivity(new Activity(actName, desc))}
+            className="addActivityButton"
+          >
+            {" "}
+            Add Activity
+          </button>
         </form>
-
+        {reporterBeingAssigned && (
+          <button
+            type="button"
+            className="cancelAssigningButton"
+            onClick={() => setReporterBeingAssigned(null)}
+          >
+            EXIT ASSIGNING
+          </button>
+        )}
         <table>
           <thead>
             <tr>
@@ -99,40 +166,58 @@ export default function Home() {
               <th colSpan={2}>Actions</th>
             </tr>
           </thead>
-
           <tbody>
-            {model.activities.map((activity) => (
-              <tr key={activity.actName}>
-                <td>{activity.actName}</td>
-                <td>{activity.description}</td>
-                <td>{activity.assignedReporter?.name ?? "Unassigned"}</td>
+            {model.activities.map((activity) => {
+              const available = availableActivities.some(
+                (a) => a.actName === activity.actName,
+              );
 
-                <td>
-                  {activity.canBePromoted && (
-                    <button
-                              type="button"
+              const newButton = reporterBeingAssigned !== null;
 
-                      className="promoteButton"
-                      onClick={() => handlePromoteActivity(activity)}
-                    >
-                      Promote
-                    </button>
-                  )}
-                </td>
-                <td>
-                  {activity.canBeRemoved && (
-                    <button
-                              type="button"
+              return (
+                <tr key={activity.actName}>
+                  <td> {activity.actName}</td>
+                  <td>{activity.description}</td>
+                  <td>{activity.assignedReporter?.name ?? "Unassigned"}</td>
 
-                      className="removeActivityButton"
-                      onClick={() => handleRemoveActivity(activity)}
-                    >
-                      Remove
-                    </button>
-                  )}
-                </td>
-              </tr>
-            ))}
+                  <td>
+                    {activity.canBePromoted && (
+                      <button
+                        type="button"
+                        className="promoteButton"
+                        onClick={() => handlePromoteActivity(activity)}
+                      >
+                        Promote
+                      </button>
+                    )}
+                  </td>
+                  <td>
+                    {activity.canBeRemoved && (
+                      <button
+                        type="button"
+                        className="removeActivityButton"
+                        onClick={() => handleRemoveActivity(activity)}
+                      >
+                        Remove
+                      </button>
+                    )}
+                  </td>
+                  <td>
+                    {available && newButton && (
+                      <button
+                        type="button"
+                        className="assignToActivityButton"
+                        onClick={() =>
+                          handleAssignReporter(activity, reporterBeingAssigned)
+                        }
+                      >
+                        ASSIGN HERE!
+                      </button>
+                    )}
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
 
@@ -147,10 +232,13 @@ export default function Home() {
             required
           />
           <button
-                    type="button"
-
-            onClick={() => handleAddReporter(new Reporter(repName))} className="addReporterButton"> Add Reporter</button>
-          
+            type="button"
+            onClick={() => handleAddReporter(new Reporter(repName))}
+            className="addReporterButton"
+          >
+            {" "}
+            Add Reporter
+          </button>
         </form>
 
         <table>
@@ -170,10 +258,9 @@ export default function Home() {
                 <td>
                   {reporter.canBeAssigned && (
                     <button
-                              type="button"
-
+                      type="button"
                       className="assignButton"
-                      onClick={() => handleAssignReporterToSomething()}
+                      onClick={() => handleSelectReporterToAssign(reporter)}
                     >
                       Assign
                     </button>
@@ -182,8 +269,7 @@ export default function Home() {
                 <td>
                   {reporter.canBeRemoved && (
                     <button
-                              type="button"
-
+                      type="button"
                       className="removeReporterButton"
                       onClick={() => handleRemoveReporter(reporter)}
                     >
