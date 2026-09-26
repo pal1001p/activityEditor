@@ -51,7 +51,7 @@ export default function Home() {
     forceRerender(rerender + 1);
   }
 
-  // use cases
+  // use case controllers
   function handleAddReporter(reporter: Reporter) {
     try {
       addReporter(model, reporter);
@@ -127,21 +127,26 @@ export default function Home() {
         <form>
           <label htmlFor="activityName">Activity Name:</label>
           <input
+            id="activityName"
             value={actName}
             onChange={(e) => setActName(e.target.value)}
+            disabled={reporterBeingAssigned !== null}
             required
           />
 
           <label htmlFor="activityDesc">Activity Description:</label>
           <input
+            id="activityDesc"
             value={desc}
             onChange={(e) => setDesc(e.target.value)}
+            disabled={reporterBeingAssigned !== null}
             required
           />
 
           <button
             type="button"
             onClick={() => handleAddActivity(new Activity(actName, desc))}
+            disabled={reporterBeingAssigned !== null}
             className="addActivityButton"
           >
             {" "}
@@ -163,7 +168,7 @@ export default function Home() {
               <th>Activity Name</th>
               <th>Activity Description</th>
               <th>Assigned Reporter</th>
-              <th colSpan={2}>Actions</th>
+              <th colSpan={3}>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -184,6 +189,7 @@ export default function Home() {
                     {activity.canBePromoted && (
                       <button
                         type="button"
+                        disabled={reporterBeingAssigned !== null}
                         className="promoteButton"
                         onClick={() => handlePromoteActivity(activity)}
                       >
@@ -195,6 +201,7 @@ export default function Home() {
                     {activity.canBeRemoved && (
                       <button
                         type="button"
+                        disabled={reporterBeingAssigned !== null}
                         className="removeActivityButton"
                         onClick={() => handleRemoveActivity(activity)}
                       >
@@ -228,11 +235,14 @@ export default function Home() {
           <label htmlFor="reporterName">Reporter Name:</label>
           <input
             value={repName}
+            id="reporterName"
+            disabled={reporterBeingAssigned !== null}
             onChange={(e) => setRepName(e.target.value)}
             required
           />
           <button
             type="button"
+            disabled={reporterBeingAssigned !== null}
             onClick={() => handleAddReporter(new Reporter(repName))}
             className="addReporterButton"
           >
@@ -259,6 +269,7 @@ export default function Home() {
                   {reporter.canBeAssigned && (
                     <button
                       type="button"
+                      disabled={reporterBeingAssigned !== null}
                       className="assignButton"
                       onClick={() => handleSelectReporterToAssign(reporter)}
                     >
@@ -270,6 +281,7 @@ export default function Home() {
                   {reporter.canBeRemoved && (
                     <button
                       type="button"
+                      disabled={reporterBeingAssigned !== null}
                       className="removeReporterButton"
                       onClick={() => handleRemoveReporter(reporter)}
                     >
