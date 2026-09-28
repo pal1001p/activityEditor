@@ -6,6 +6,8 @@ import { Activity } from "../model";
 import { Model } from "../model";
 import React, { useEffect } from "react";
 
+
+// use case controllers
 export function addReporter(m: Model, reporter: Reporter) {
   m.addReporter(reporter);
 }
@@ -51,7 +53,7 @@ export default function Home() {
     forceRerender(rerender + 1);
   }
 
-  // use case controllers
+  // add reporter 
   function handleAddReporter(reporter: Reporter) {
     try {
       addReporter(model, reporter);
@@ -60,7 +62,7 @@ export default function Home() {
       alert(error);
     }
   }
-
+  // remove reporter 
   function handleRemoveReporter(reporter: Reporter) {
     try {
       removeReporter(model, reporter);
@@ -69,7 +71,7 @@ export default function Home() {
       alert(error);
     }
   }
-
+  // add activity 
   function handleAddActivity(activity: Activity) {
     try {
       addActivity(model, activity);
@@ -78,7 +80,7 @@ export default function Home() {
       alert(error);
     }
   }
-
+  // promote activity 
   function handlePromoteActivity(activity: Activity) {
     try {
       promoteActivity(model, activity);
@@ -87,7 +89,7 @@ export default function Home() {
       alert(error);
     }
   }
-
+  // remove activity 
   function handleRemoveActivity(activity: Activity) {
     try {
       removeActivity(model, activity);
@@ -96,10 +98,11 @@ export default function Home() {
       alert(error);
     }
   }
-
+  // assign reporter 
   function handleAssignReporter(activity: Activity, reporter: Reporter): void {
     try {
       assignReporter(model, activity, reporter);
+      // reporter should be unselected after being assigned
       setReporterBeingAssigned(null);
 
       andRefreshDisplay();
@@ -108,8 +111,8 @@ export default function Home() {
     }
   }
 
-  // low-level
-
+  // low-level controller to handle assigning
+  // once a reporter being assigned is selected, available activities where they can be assigned are shown
   function handleSelectReporterToAssign(reporter: Reporter) {
     const available = model.getAvailableActivities();
     setAvailableActivities(available);
