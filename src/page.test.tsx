@@ -4,14 +4,12 @@ import { render, fireEvent, cleanup } from "@testing-library/react";
 
 test("Home", async () => {
   const { getByText } = render(<Home />);
-  const activityList = getByText(/List of Activities/i);
   expect(getByText("List of Activities")).toBeTruthy();
-  const reporterList = getByText(/List of Reporters/i);
   expect(getByText("List of Reporters")).toBeTruthy();
   cleanup();
 });
 
-test("Add Activity button adds activity", async () => {
+test("Add Activity: button adds activity", async () => {
   const { getByText, getByLabelText } = render(<Home />);
 
   const name = getByLabelText(/Activity Name:/i);
@@ -28,7 +26,7 @@ test("Add Activity button adds activity", async () => {
   cleanup();
 });
 
-test("Add Reporter button adds reporter", async () => {
+test("Add Reporter: button adds reporter", async () => {
   const { getByText, getByLabelText } = render(<Home />);
 
   const name = getByLabelText(/Reporter Name:/i);
@@ -43,7 +41,7 @@ test("Add Reporter button adds reporter", async () => {
   cleanup();
 });
 
-test("Remove Activity button removes activity", async () => {
+test("Remove Activity: button removes activity", async () => {
   const { getByText, getByLabelText, queryByText } = render(<Home />);
 
   fireEvent.change(getByLabelText(/Activity Name:/i), {
@@ -63,7 +61,7 @@ test("Remove Activity button removes activity", async () => {
   cleanup();
 });
 
-test("Remove Reporter button removes reporter", async () => {
+test("Remove Reporter: button removes reporter", async () => {
   const { getByText, getByLabelText, queryByText } = render(<Home />);
 
   fireEvent.change(getByLabelText(/Reporter Name:/i), {
@@ -80,7 +78,7 @@ test("Remove Reporter button removes reporter", async () => {
   cleanup();
 });
 
-test("Promote Activity button promotes activity", async () => {
+test("Promote Activity: button promotes activity", async () => {
   const { getByText, getByLabelText, getAllByRole } = render(<Home />);
 
   fireEvent.change(getByLabelText(/Activity Name:/i), {
@@ -109,7 +107,7 @@ test("Promote Activity button promotes activity", async () => {
   cleanup();
 });
 
-test("Assign Reporter assigns reporter", async () => {
+test("Assign Reporter: assigns reporter", async () => {
   const { getByText, getByLabelText, getAllByRole } = render(<Home />);
 
   fireEvent.change(getByLabelText(/Activity Name:/i), {

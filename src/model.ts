@@ -36,20 +36,13 @@ export class Model {
     reporters: Array<Reporter> 
     activities: Array<Activity>
 
-    // empty at first
+    // empty lists at first
     constructor(){
         this.activities = []
         this.reporters = []
     }
 
-    // is this even necessary if we are adding through use cases later?
-    // initialize(reporters: Array<Reporter>, activities:Array<Activity>){
-    //     this.activities = activities
-    //     this.reporters = reporters
-    // }
-
-
-    // do i need return values? idk if ill use them
+    // add reporter use case
     addReporter(reporter: Reporter): Array<Reporter>{
         // only add if name provided
         if (!reporter.name){
@@ -64,16 +57,18 @@ export class Model {
         return this.reporters
     }
 
-
+    // remove reporter use case
     removeReporter(reporter: Reporter): Array<Reporter>{
+        // shouldn't reach this block
         if (!reporter.canBeRemoved){
             throw new Error ("This reporter cannot be removed!")
         }
+        // makes new array without reporter
         this.reporters = this.reporters.filter(r=>r.name !== reporter.name)
         return this.reporters
     }
 
-
+    // add activity use case
     addActivity(activity: Activity): Array<Activity>{
         // only add if name AND description provided
         if (!activity.actName || !activity.description){
@@ -88,13 +83,19 @@ export class Model {
         return this.activities
     }
 
+    // promote activity use case
     promoteActivity(activity: Activity): Array<Activity>{
+        // shouldn't reach this block
         if (!activity.canBePromoted){
             throw new Error("This activity cannot be promoted!")
         }
+        // finds activity to promote
         const toPromote = this.activities.find(a => a.actName == activity.actName)
+        // creates new array without activity to promote
         const otherActivities = this.activities.filter(a => a.actName !== activity.actName)
 
+        // guard for null
+        // adds activity to front of array
         if (toPromote){
             otherActivities.unshift(toPromote)
         }
@@ -104,16 +105,20 @@ export class Model {
         return this.activities
     }
 
+    // remove activity use case
     removeActivity(activity: Activity): Array<Activity>{
+        // shouldn't reach this block
         if (!activity.canBeRemoved){
             throw new Error ("This activity cannot be removed!")
         }
+        // creates new array without activity
         this.activities = this.activities.filter(a=>a.actName !== activity.actName)
         return this.activities
     }
 
+    // assign reporter use case
     assignReporter(activity: Activity, reporter: Reporter): void{
-        // shouldn't get past these anyway
+        // shouldn't reach these blocks
         if (!activity.canBeAssigned){
             throw new Error ("This activity cannot be assigned to!")
         }
@@ -121,16 +126,21 @@ export class Model {
             throw new Error ("This reporter cannot be assigned!")
         }
 
+        // keeps track of assignments, to be used during rendering in lists of reporters/activities
         activity.assignedReporter = reporter
         reporter.assignedActivity = activity
 
+        // useful states during renderng
         activity.canBeAssigned = false
         reporter.canBeAssigned = false
         activity.canBeRemoved = false
         reporter.canBeRemoved = false
     }
 
+    // getter for available activities for when editor wants to assign an activity to a reporter
+    // used during rendering
     getAvailableActivities(){
+        // creates new array where activity is available (can be assigned)
         const available = this.activities.filter(a=>a.canBeAssigned)
         return available
     }
